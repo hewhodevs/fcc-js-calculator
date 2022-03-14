@@ -42,12 +42,14 @@ class Calculator extends React.Component {
 
   onClickNumber(e) {
     const clickedNum = e.target.textContent;
+    // dont allow leading 0's
     if(this.state.display === "0") {
-      // dont allow leading 0's
       this.setState({display: clickedNum});
     } else {
+      // if we just clicked an operation button
       if(this.state.lastKeyPress === "operation") {
-        // show new number if user prev key press was an operation
+        // store the currently displayed value and replace it with the new input
+        this.setState({storedValue: this.getDisplayValue()})
         this.setDisplay(clickedNum);
       } else {
         // else continue to append numbers to the current input
@@ -69,17 +71,19 @@ class Calculator extends React.Component {
   }
 
   onClickAdd() {
-    // get previous storedValue
-    const prevStoredValue = this.state.storedValue;
-    // store current value and operation pressed
+    const displayedValue = this.getDisplayValue();
+    let result = this.state.storedValue + this.getDisplayValue();
+
+    // store the previously displayed value
     this.setState({
       lastKeyPress: "operation",
       operation: "add",
-      storedValue: this.getDisplayValue()
+      storedValue: displayedValue
     });
-    // perform operation
-    let result = prevStoredValue + this.getDisplayValue();
+
+    // display the result
     this.setDisplay(result.toString());
+    console.log(`storedValue: ${this.state.storedValue}  | display: ${this.state.display}`)
   }
 
 
