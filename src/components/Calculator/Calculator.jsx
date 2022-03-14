@@ -56,6 +56,7 @@ class Calculator extends React.Component {
         this.appendToDisplay(clickedNum);
       }
     }
+    this.setState({lastKeyPress: "number"});
   }
 
   onClickZero() {
@@ -99,8 +100,8 @@ class Calculator extends React.Component {
 
   onClickOperation(e) {
     const displayedValue = this.getDisplayValue();
-    // perform the last recorded operation
-    if(this.state.operation !== "") {
+    // Perform the last recorded non subsequent operation
+    if(this.state.operation !== "" && this.state.lastKeyPress === "number") {
       this.performLastClickedOperation();
     }
     // store the previously displayed value
