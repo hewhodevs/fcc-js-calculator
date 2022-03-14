@@ -65,7 +65,7 @@ class Calculator extends React.Component {
               <button id="two" onClick={() => {this.showInput("2")}}>2</button>
               <button id="three" onClick={() => {this.showInput("3")}}>3</button>
             </div>
-            <div className="row">
+            <div className="row last-row">
               <button id="zero" onClick={() => {this.showInput("0")}}>0</button>
               <button id="decimal">.</button>
             </div>
