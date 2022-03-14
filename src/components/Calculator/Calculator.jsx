@@ -14,7 +14,7 @@ class Calculator extends React.Component {
     this.onClickNumber = this.onClickNumber.bind(this);
     this.onClickZero = this.onClickZero.bind(this);
     this.onClickDecimal = this.onClickDecimal.bind(this);
-    this.onClickAdd = this.onClickAdd.bind(this);
+    this.onClickOperation = this.onClickOperation.bind(this);
   }
 
   setDisplay(str) {
@@ -70,20 +70,45 @@ class Calculator extends React.Component {
     }
   }
 
-  onClickAdd() {
-    const displayedValue = this.getDisplayValue();
-    let result = this.state.storedValue + this.getDisplayValue();
+  performLastClickedOperation() {
+    const storedValue = this.state.storedValue;
+    const displayValue = this.getDisplayValue();
+    const lastOperation = this.state.operation;
+    let result;
 
+    switch (lastOperation) {
+      case "add":
+        result = storedValue + displayValue; 
+        break;
+      case "subtract":
+        result =  storedValue - displayValue;
+        break;
+      case "multiply":
+        result = storedValue * displayValue;
+        break;
+      case "divide":
+        result = storedValue / displayValue;
+        break;
+      default:
+        result = 0;
+        break;
+    }
+    // display the result
+    this.setDisplay(result.toString());
+  }
+
+  onClickOperation(e) {
+    const displayedValue = this.getDisplayValue();
+    // perform the last recorded operation
+    if(this.state.operation !== "") {
+      this.performLastClickedOperation();
+    }
     // store the previously displayed value
     this.setState({
       lastKeyPress: "operation",
-      operation: "add",
+      operation: e.target.id,
       storedValue: displayedValue
     });
-
-    // display the result
-    this.setDisplay(result.toString());
-    console.log(`storedValue: ${this.state.storedValue}  | display: ${this.state.display}`)
   }
 
 
@@ -98,10 +123,10 @@ class Calculator extends React.Component {
 
         <div className="pad">
           <div className="operations">
-            <button id="divide">/</button>
-            <button id="multiply">&#215;</button>
-            <button id="subtract">&#8722;</button>
-            <button id="add" onClick={this.onClickAdd}>+</button>
+            <button id="divide" onClick={this.onClickOperation}>/</button>
+            <button id="multiply" onClick={this.onClickOperation}>&#215;</button>
+            <button id="subtract" onClick={this.onClickOperation}>&#8722;</button>
+            <button id="add" onClick={this.onClickOperation}>+</button>
             <button id="equals">=</button>
           </div>
           
