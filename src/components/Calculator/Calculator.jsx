@@ -6,29 +6,49 @@ class Calculator extends React.Component {
     super(props);
     this.state = {
       display: "0",
+      operation: "",
+      storedValue: "",
     }
-    this.clearDisplay = this.clearDisplay.bind(this);
-    this.showInput = this.showInput.bind(this);
+    this.onClickClear = this.onClickClear.bind(this);
+    this.onClickNumber = this.onClickNumber.bind(this);
+    this.onClickZero = this.onClickZero.bind(this);
+    this.onClickDecimal = this.onClickDecimal.bind(this);
   }
 
-  // clear the display
-  clearDisplay() {
-    this.setState({display: "0"});
+  appendToDisplay(str) {
+    this.setState((prevState) => ({
+      display: prevState.display + str
+    }))
   }
 
-  // Show numbers as input on the display. prevent leading zero's on display
-  showInput(inputNumString) {
-    let currentDisplayValue = this.state.display;
-    if(currentDisplayValue === "0") {
-      // dont allow leading zero's
-      this.setState({display: inputNumString})
+  onClickClear() {
+    this.setState({
+      display: "0",
+      operation: "",
+      storedValue: "",
+    })
+  }
+
+  onClickNumber(e) {
+    const clickedNum = e.target.textContent;
+    if(this.state.display === "0") {
+      this.setState({display: clickedNum});
     } else {
-      this.setState((prevState) => ({
-        display: prevState.display + inputNumString
-      }));
+      this.appendToDisplay(clickedNum);
     }
   }
 
+  onClickZero() {
+    if(this.state.display !== "0") {
+      this.appendToDisplay("0")
+    }
+  }
+
+  onClickDecimal() {
+    if(this.state.display.includes(".") === false) {
+      this.appendToDisplay(".");
+    }
+  }
 
 
   render() {
@@ -36,7 +56,7 @@ class Calculator extends React.Component {
       <div className="Calculator">
 
         <div className="display-container">
-          <button id="clear" onClick={this.clearDisplay}>C</button>
+          <button id="clear" onClick={this.onClickClear}>C</button>
           <span id="display">{this.state.display}</span>
         </div>
 
@@ -51,23 +71,23 @@ class Calculator extends React.Component {
           
           <div className="numpad">
             <div className="row">
-              <button id="seven" onClick={() => {this.showInput("7")}}>7</button>
-              <button id="eight" onClick={() => {this.showInput("8")}}>8</button>
-              <button id="nine" onClick={() => {this.showInput("9")}}>9</button>
+              <button id="seven" onClick={this.onClickNumber}>7</button>
+              <button id="eight" onClick={this.onClickNumber}>8</button>
+              <button id="nine" onClick={this.onClickNumber}>9</button>
             </div>
             <div className="row">
-              <button id="four" onClick={() => {this.showInput("4")}}>4</button>
-              <button id="five" onClick={() => {this.showInput("5")}}>5</button>
-              <button id="six" onClick={() => {this.showInput("6")}}>6</button>
+              <button id="four" onClick={this.onClickNumber}>4</button>
+              <button id="five" onClick={this.onClickNumber}>5</button>
+              <button id="six" onClick={this.onClickNumber}>6</button>
             </div>
             <div className="row">
-              <button id="one" onClick={() => {this.showInput("1")}}>1</button>
-              <button id="two" onClick={() => {this.showInput("2")}}>2</button>
-              <button id="three" onClick={() => {this.showInput("3")}}>3</button>
+              <button id="one" onClick={this.onClickNumber}>1</button>
+              <button id="two" onClick={this.onClickNumber}>2</button>
+              <button id="three" onClick={this.onClickNumber}>3</button>
             </div>
             <div className="row last-row">
-              <button id="zero" onClick={() => {this.showInput("0")}}>0</button>
-              <button id="decimal">.</button>
+              <button id="zero" onClick={this.onClickZero}>0</button>
+              <button id="decimal" onClick={this.onClickDecimal}>.</button>
             </div>
           </div>
         </div>
