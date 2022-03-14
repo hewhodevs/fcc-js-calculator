@@ -6,13 +6,19 @@ class Calculator extends React.Component {
     super(props);
     this.state = {
       display: "0",
+      lastKeyPress: "",
       operation: "",
-      storedValue: "",
+      storedValue: 0,
     }
     this.onClickClear = this.onClickClear.bind(this);
     this.onClickNumber = this.onClickNumber.bind(this);
     this.onClickZero = this.onClickZero.bind(this);
     this.onClickDecimal = this.onClickDecimal.bind(this);
+    this.onClickAdd = this.onClickAdd.bind(this);
+  }
+
+  setDisplay(str) {
+    this.setState({display: str});
   }
 
   appendToDisplay(str) {
@@ -21,20 +27,32 @@ class Calculator extends React.Component {
     }))
   }
 
+  getDisplayValue() {
+    return parseFloat(this.state.display);
+  }
+
   onClickClear() {
     this.setState({
       display: "0",
+      lastKeyPress: "",
       operation: "",
-      storedValue: "",
+      storedValue: 0,
     })
   }
 
   onClickNumber(e) {
     const clickedNum = e.target.textContent;
     if(this.state.display === "0") {
+      // dont allow leading 0's
       this.setState({display: clickedNum});
     } else {
-      this.appendToDisplay(clickedNum);
+      if(this.state.lastKeyPress === "operation") {
+        // show new number if user prev key press was an operation
+        this.setDisplay(clickedNum);
+      } else {
+        // else continue to append numbers to the current input
+        this.appendToDisplay(clickedNum);
+      }
     }
   }
 
@@ -48,6 +66,20 @@ class Calculator extends React.Component {
     if(this.state.display.includes(".") === false) {
       this.appendToDisplay(".");
     }
+  }
+
+  onClickAdd() {
+    // get previous storedValue
+    const prevStoredValue = this.state.storedValue;
+    // store current value and operation pressed
+    this.setState({
+      lastKeyPress: "operation",
+      operation: "add",
+      storedValue: this.getDisplayValue()
+    });
+    // perform operation
+    let result = prevStoredValue + this.getDisplayValue();
+    this.setDisplay(result.toString());
   }
 
 
@@ -65,7 +97,7 @@ class Calculator extends React.Component {
             <button id="divide">/</button>
             <button id="multiply">&#215;</button>
             <button id="subtract">&#8722;</button>
-            <button id="add">+</button>
+            <button id="add" onClick={this.onClickAdd}>+</button>
             <button id="equals">=</button>
           </div>
           
