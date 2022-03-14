@@ -42,10 +42,10 @@ class Calculator extends React.Component {
 
         <div className="pad">
           <div className="operations">
-            <button id="add">+</button>
-            <button id="subtract">-</button>
-            <button id="multiply">x</button>
             <button id="divide">/</button>
+            <button id="multiply">&#215;</button>
+            <button id="subtract">&#8722;</button>
+            <button id="add">+</button>
             <button id="equals">=</button>
           </div>
           
