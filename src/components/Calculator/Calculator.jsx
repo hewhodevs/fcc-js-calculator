@@ -15,6 +15,7 @@ class Calculator extends React.Component {
     this.onClickZero = this.onClickZero.bind(this);
     this.onClickDecimal = this.onClickDecimal.bind(this);
     this.onClickOperation = this.onClickOperation.bind(this);
+    this.onClickEquals = this.onClickEquals.bind(this);
   }
 
   setDisplay(str) {
@@ -94,6 +95,10 @@ class Calculator extends React.Component {
         result = 0;
         break;
     }
+    this.setState({
+      display: result.toString(),
+      storedValue: displayValue
+    });
     // display the result
     this.setDisplay(result.toString());
   }
@@ -108,8 +113,15 @@ class Calculator extends React.Component {
     this.setState({
       lastKeyPress: "operation",
       operation: e.target.id,
-      storedValue: displayedValue
     });
+    console.log(`storedValue: ${this.state.storedValue}  |  displayValue: ${this.state.display}`)
+  }
+
+  onClickEquals() {
+    if(this.state.operation !== "") {
+      this.performLastClickedOperation();
+    }
+    console.log(`storedValue: ${this.state.storedValue}  |  displayValue: ${this.state.display}`)
   }
 
 
@@ -128,7 +140,7 @@ class Calculator extends React.Component {
             <button id="multiply" onClick={this.onClickOperation}>&#215;</button>
             <button id="subtract" onClick={this.onClickOperation}>&#8722;</button>
             <button id="add" onClick={this.onClickOperation}>+</button>
-            <button id="equals">=</button>
+            <button id="equals" onClick={this.onClickEquals}>=</button>
           </div>
           
           <div className="numpad">
