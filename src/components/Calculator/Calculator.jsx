@@ -38,6 +38,7 @@ class Calculator extends React.Component {
       lastKeyPress: "",
       operation: "",
       storedValue: 0,
+      negativeEnabled: false
     })
   }
 
@@ -51,7 +52,16 @@ class Calculator extends React.Component {
       if(this.state.lastKeyPress === "operation") {
         // store the currently displayed value and replace it with the new input
         this.setState({storedValue: this.getDisplayValue()})
-        this.setDisplay(clickedNum);
+        if(this.state.negativeEnabled) {
+          // apply negative sign to the next input if negative has been toggled on
+          const negativeClickedNum = -Math.abs(parseFloat(clickedNum));
+          // display the negative value
+          this.setDisplay(negativeClickedNum);
+          // reset the negative flag
+          this.setState({negativeEnabled: false});
+        } else {
+          this.setDisplay(clickedNum);
+        }
       } else {
         // else continue to append numbers to the current input
         this.appendToDisplay(clickedNum);
@@ -100,12 +110,23 @@ class Calculator extends React.Component {
 
   onClickOperation(e) {
     const displayedValue = this.getDisplayValue();
-    // Perform the last recorded non subsequent operation
+    // toggle the negative sign when clicking the minus button after consecutive operations
+    if(this.state.lastKeyPress === "operation" && e.target.id === "subtract") {
+      this.setState((prevState) => ({
+        negativeEnabled: !prevState.negativeEnabled
+      }));
+      return;
+    } else if(this.state.lastKeyPress === "operation" && e.target.id !== "subtract" && this.state.negativeEnabled) {
+      //reset the negative flag to false if we click other non subtract operations in sequence
+      this.setState({negativeEnabled: false});
+    }
+
+    // Perform the last recorded non subsequent operation, excluding subtract
     if(this.state.operation !== "" && this.state.lastKeyPress === "number") {
       let result = this.performLastClickedOperation();
       this.setState({
         display: result.toString(),
-        storedValue: displayedValue
+        storedValue: displayedValue,
       });
     }
     // store the previously displayed value
@@ -113,9 +134,10 @@ class Calculator extends React.Component {
       lastKeyPress: "operation",
       operation: e.target.id,
     });
-    console.log(`storedValue: ${this.state.storedValue}  |  displayValue: ${this.state.display}`)
+    console.log(`storedValue: ${this.state.storedValue}  |  displayValue: ${this.state.display}  |  operation: ${this.state.operation}  |  negativeEnabled: ${this.state.negativeEnabled}`)
   }
 
+  
   onClickEquals() {
     const displayedValue = this.getDisplayValue();
     // perform the last recorded operation
@@ -135,7 +157,7 @@ class Calculator extends React.Component {
       }
     }
     this.setState({lastKeyPress: "equals"});
-    console.log(`storedValue: ${this.state.storedValue}  |  displayValue: ${this.state.display}`)
+    console.log(`storedValue: ${this.state.storedValue}  |  displayValue: ${this.state.display}  |  operation: ${this.state.operation}  |  negativeEnabled: ${this.state.negativeEnabled}`)
   }
 
 
