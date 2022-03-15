@@ -95,19 +95,18 @@ class Calculator extends React.Component {
         result = 0;
         break;
     }
-    this.setState({
-      display: result.toString(),
-      storedValue: displayValue
-    });
-    // display the result
-    this.setDisplay(result.toString());
+    return result.toString();
   }
 
   onClickOperation(e) {
     const displayedValue = this.getDisplayValue();
     // Perform the last recorded non subsequent operation
     if(this.state.operation !== "" && this.state.lastKeyPress === "number") {
-      this.performLastClickedOperation();
+      let result = this.performLastClickedOperation();
+      this.setState({
+        display: result.toString(),
+        storedValue: displayedValue
+      });
     }
     // store the previously displayed value
     this.setState({
@@ -118,9 +117,24 @@ class Calculator extends React.Component {
   }
 
   onClickEquals() {
+    const displayedValue = this.getDisplayValue();
+    // perform the last recorded operation
     if(this.state.operation !== "") {
-      this.performLastClickedOperation();
+      let result = this.performLastClickedOperation();
+      // if first equals click, update display and stored value
+      if(this.state.lastKeyPress !== "equals") {
+        this.setState({
+          display: result.toString(),
+          storedValue: displayedValue
+        });
+      } else {
+        // if subsequent equals click, just update the displayed result
+        this.setState({
+          display: result.toString(),
+        });
+      }
     }
+    this.setState({lastKeyPress: "equals"});
     console.log(`storedValue: ${this.state.storedValue}  |  displayValue: ${this.state.display}`)
   }
 
